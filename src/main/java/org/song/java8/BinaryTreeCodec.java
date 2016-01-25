@@ -108,6 +108,42 @@ public class BinaryTreeCodec {
                 inOrder(node.right, bldr);
             }
         }
+
+        public String morrisTraversal(){
+            TreeNode current = this;
+            TreeNode pre=null;
+            StringBuilder bldr = new StringBuilder("[");
+            while (current !=null){
+                if (current.left == null){
+                    bldr.append(current.val).append(",");
+                    current = current.right;
+                }
+                else{
+                    pre = current.left;
+                    // find current's immediate predecessor
+                    while (pre.right !=null && pre.right !=current){
+                        pre = pre.right;
+                    }
+
+                    if (pre.right == null){
+                        // make a temp link from right to current;
+                        pre.right = current;
+                        current = current.left;
+                    }
+                    else{
+                        // pre.right is pointed to current; meaning that we finished the traversal of all current's left.
+                        // we need to visit current now.
+                        // restore pre.right to null;
+                        pre.right = null;
+                        bldr.append(current.val).append(",");
+                        current = current.right;
+                    }
+
+                }
+            }
+
+            return bldr.deleteCharAt(bldr.lastIndexOf(",")).append("]").toString();
+        }
     }
 
     public static void main (String [] args){
@@ -120,5 +156,12 @@ public class BinaryTreeCodec {
         TreeNode copy = codec.deserialize(se);
         System.out.println("Copied tree="+copy);
 
+        String s = "1,2,3,4,5,6,7,8,9,10,11,12,x,x";
+        TreeNode tree = codec.deserialize(s);
+        System.out.println("Morris Traversial: " + tree.morrisTraversal());
+        System.out.println("In order Traversial: " + tree);
+
     }
+
+
 }

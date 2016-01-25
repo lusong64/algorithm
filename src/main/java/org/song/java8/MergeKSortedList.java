@@ -13,7 +13,9 @@ public class MergeKSortedList {
 
         PriorityQueue<ListNode> q = new PriorityQueue<>((l1, l2) -> l1.val - l2.val);
         for (ListNode node : lists){
-            q.add(node);
+            if (node != null){
+                q.add(node);
+            }
         }
         if (q.isEmpty()){
             return null;
