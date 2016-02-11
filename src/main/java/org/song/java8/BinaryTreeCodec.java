@@ -1,6 +1,8 @@
 package org.song.java8;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -144,6 +146,142 @@ public class BinaryTreeCodec {
 
             return bldr.deleteCharAt(bldr.lastIndexOf(",")).append("]").toString();
         }
+
+    }
+
+    public TreeNode sortedArrayToBST(int[] nums) {
+        if (nums == null || nums.length==0){
+            return null;
+        }
+
+        return buildATree(nums, 0, nums.length-1);
+
+
+    }
+
+    private TreeNode buildATree(int[] nums, int start, int end){
+        if (start>end){
+            return null;
+        }
+        else if (start == end && start>=0 && start<nums.length){
+            return new TreeNode(nums[start]);
+        }
+
+        int mid = start + (end-start)/2;
+        TreeNode root = new TreeNode(nums[mid]);
+        root.left = buildATree(nums, start, mid-1);
+        root.right = buildATree(nums, mid+1, end);
+
+        return root;
+    };
+
+    public boolean hasPathSum(TreeNode root, int sum) {
+        if (root == null){
+            return false;
+        }
+        return pathExists(root, 0, sum);
+    }
+
+    private boolean pathExists(TreeNode root, int sumSofar, int sum){
+        if (root==null){
+            return sumSofar == sum;
+        }
+        if (root.left == null && root.right==null){
+            return sumSofar+root.val==sum;
+        }
+
+        return pathExists(root.left, sumSofar+root.val, sum) || pathExists(root.right, sumSofar+root.val, sum);
+    }
+
+    public List<List<Integer>> pathSum(TreeNode root, int sum) {
+        if (root == null){
+            return new ArrayList<List<Integer>>();
+        }
+
+        return findPathSum(root, 0, sum);
+    }
+
+    private List<List<Integer>> findPathSum(TreeNode root, int sumSofar, int sum){
+
+        if (root.left == null && root.right == null){
+            if (sumSofar + root.val == sum){
+                List<Integer> list= new LinkedList<>();
+                list.add(root.val);
+                List<List<Integer>> result = new LinkedList<>();
+                result.add(list);
+                return result;
+            }
+            else{
+                return new ArrayList<List<Integer>>();
+            }
+
+        }
+
+        List<List<Integer>> fromLeft = null;
+        if (root.left !=null){
+            fromLeft=findPathSum(root.left, sumSofar+root.val, sum);
+            if (fromLeft!=null && !fromLeft.isEmpty()){
+                for (List<Integer> list : fromLeft){
+                    list.add(0, root.val);
+                }
+            }
+        }
+
+        List<List<Integer>> fromRight = null;
+        if (root.right !=null){
+           fromRight = findPathSum(root.right, sumSofar+root.val, sum);
+           if (fromRight!=null && !fromRight.isEmpty()){
+                for (List<Integer> list : fromRight){
+                    list.add(0, root.val);
+                }
+           }
+        }
+
+        List<List<Integer>> result = new LinkedList<>();
+        if (fromLeft!=null && !fromLeft.isEmpty()){
+            result.addAll(fromLeft);
+        }
+        if (fromRight!=null && !fromRight.isEmpty()){
+            result.addAll(fromRight);
+        }
+        return result;
+    }
+
+
+    public void flatten(TreeNode root) {
+        if (root==null){
+            return;
+        }
+        flattenAndGetTail(root);
+    }
+
+    private TreeNode flattenAndGetTail(TreeNode root){
+        if (root.left == null && root.right == null){
+            return root;
+        }
+
+        TreeNode tail = null;
+        TreeNode theLeft = root.left;
+        TreeNode theRight = root.right;
+
+        if (theLeft != null){
+            tail = flattenAndGetTail(theLeft);
+            root.right = theLeft;
+            root.left = null;
+        }
+        else{
+            tail = root;
+        }
+
+        if (theRight == null){
+            return tail;
+        }
+        else{
+            tail.right = theRight;
+            tail = flattenAndGetTail(theRight);
+        }
+
+        return tail;
     }
 
     public static void main (String [] args){

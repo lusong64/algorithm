@@ -94,6 +94,8 @@ public class WeightedUnionFind {
         public int findParent(int x){
             int p = x;
             while (parents[p] != p){
+                // path compression
+                parents[p] = parents[parents[p]];
                 p = parents[p];
             }
             return p;
