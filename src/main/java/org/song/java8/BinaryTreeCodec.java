@@ -284,6 +284,41 @@ public class BinaryTreeCodec {
         return tail;
     }
 
+    public int largestBSTSubtree(TreeNode root) {
+        int[] result = count(root, Long.MIN_VALUE, Long.MAX_VALUE);
+        return result[1];
+    }
+
+    private int[] count (TreeNode root, long lower, long higher){
+        int [] result = new int[2];
+        if (root==null){
+            return result;
+        }
+
+        if (root.val <=lower || root.val>=higher){
+            result[0] = -1;
+        }
+
+
+        int[] countLeft = count(root.left, Long.MIN_VALUE, root.val);
+        int[] countRight = count(root.right, root.val, Long.MAX_VALUE);
+
+        if (countLeft[0] != -1 && countRight[0] != -1){
+            result[1] = countLeft[1] + countRight[1]+1;
+        }
+        else if (countLeft[0] == -1 || countRight[0] == -1){
+            result[0] = -1;
+            result[1] = Math.max(countLeft[1], countRight[1]);
+        }
+        /*
+        else{
+            result[1] = 1 + Math.max(countLeft[1], countRight[1]);
+        }
+        */
+        return result;
+
+    }
+
     public static void main (String [] args){
         BinaryTreeCodec codec = new BinaryTreeCodec();
         TreeNode root = new TreeNode(1);
@@ -298,6 +333,16 @@ public class BinaryTreeCodec {
         TreeNode tree = codec.deserialize(s);
         System.out.println("Morris Traversial: " + tree.morrisTraversal());
         System.out.println("In order Traversial: " + tree);
+
+        String s1 = "3,1,x,2,x,x,4";
+        TreeNode rootS1 = codec.deserialize(s1);
+
+        System.out.println(codec.largestBSTSubtree(rootS1));
+
+        String s2 = "3,2,4,x,x,1";
+        TreeNode rootS2 = codec.deserialize(s2);
+        System.out.println(codec.largestBSTSubtree(rootS2));
+
 
     }
 
