@@ -151,11 +151,68 @@ public class Calculator {
             return 0;
         }
         List<Object> l = infixToPostFix(s);
-        System.out.println("postFix is: "+l);
+        System.out.println("postFix is: " + l);
         int res = evaluate(l);
 
         System.out.println("res is: "+res);
         return res;
+    }
+
+    public int calculateSimple(String s) {
+        if (s==null || s.trim().length()==0){
+            return 0;
+        }
+        char [] cs = s.trim().toCharArray();
+        long num =0;
+        char sign='+';
+        Stack<Long> stack = new Stack<>();
+        for (int i=0; i<cs.length; i++){
+            if(cs[i]>='0' && cs[i] <='9'){
+                num = num * 10 + (cs[i]-'0');
+            }
+            else if (cs[i] !=' ' || i==cs.length-1){
+                switch(sign){
+                    case '+':
+                        stack.push(num);
+                        break;
+                    case '-':
+                        stack.push(-num);
+                        break;
+                    case '*':
+                        stack.push(stack.pop().longValue()*num);
+                        break;
+                    case '/':
+                        stack.push(stack.pop().longValue()/num);
+                        break;
+                }
+                num = 0;
+                sign = cs[i];
+            }
+        }
+        if (num!=0){
+
+            switch(sign){
+                case '+':
+                    stack.push(num);
+                    break;
+                case '-':
+                    stack.push(-num);
+                    break;
+                case '*':
+                    stack.push(stack.pop().longValue()*num);
+                    break;
+                case '/':
+                    stack.push(stack.pop().longValue()/num);
+                    break;
+            }
+
+        }
+        num=0;
+        while (!stack.isEmpty()){
+            num+=stack.pop().longValue();
+        }
+        return (int) num;
+//        return num==Integer.MAX_VALUE?Integer.MIN_VALUE+1:(int)num;
     }
 
 
@@ -163,6 +220,12 @@ public class Calculator {
         Calculator cal = new Calculator();
         String s1 = " 2-1 + 2 ";
         cal.calculate(s1);
+
+        String s2 = "0-2147483647";
+        System.out.println(s2 + ": " + cal.calculateSimple(s2));
+
+        String s3 = "2147483647";
+        System.out.println(s3 + ": " + cal.calculateSimple(s3));
 
     }
 }

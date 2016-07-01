@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class TopologicalSortCourseSchedule {
     private static enum VisitStatus{
-        UnVisited, Visiting, Visted;
+        UnVisited, Visiting, Visited;
     }
 
     private static int FOUND_LOOP=-1;
@@ -57,12 +57,12 @@ public class TopologicalSortCourseSchedule {
     }
 
     private int dfs (Course c, int rank){
-        c.status=VisitStatus.Visiting;
+        c.status=VisitStatus.Visited;
         for (Course cc : c.dependents){
-            if (cc.status == VisitStatus.Visiting){
+            if (cc.status == VisitStatus.Visited && cc.rank == -1){
                 return FOUND_LOOP;
             }
-            else if (cc.status != VisitStatus.Visted){
+            else if (cc.status != VisitStatus.Visited){
                 rank = dfs(cc, rank);
                 if (rank == FOUND_LOOP){
                     return FOUND_LOOP;
@@ -70,7 +70,7 @@ public class TopologicalSortCourseSchedule {
             }
         }
         c.rank = rank;
-        c.status = VisitStatus.Visted;
+//        c.status = VisitStatus.Visited;
         return --rank;
     }
 
@@ -78,7 +78,7 @@ public class TopologicalSortCourseSchedule {
         private final int id;
         private final List<Course> dependents = new LinkedList<>();
         private VisitStatus status = VisitStatus.UnVisited;
-        private int rank;
+        private int rank = -1;
         public Course(int id){
             this.id = id;
         }
@@ -90,10 +90,14 @@ public class TopologicalSortCourseSchedule {
 
     public static void main(String[] args){
         TopologicalSortCourseSchedule topologicalSortCourseSchedule = new TopologicalSortCourseSchedule();
+        /*
         int[][]  preq = {{1,0},{2,0},{3,1},{3,2}};
         int [] result = topologicalSortCourseSchedule.findOrder(4, preq);
+        */
         //int[][]  preq = {{0,1}, {1,0}};
-        //int [] result = topologicalSortCourseSchedule.findOrder(2, preq);
+        //int[][]  preq = {{1,0}};
+        int[][]  preq = {{0,1}};
+        int [] result = topologicalSortCourseSchedule.findOrder(2, preq);
         System.out.println(Arrays.toString(result));
     }
 

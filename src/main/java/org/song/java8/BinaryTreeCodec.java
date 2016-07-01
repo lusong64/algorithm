@@ -86,69 +86,6 @@ public class BinaryTreeCodec {
         return root;
     }
 
-    private static class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-        TreeNode(int x) { val = x; }
-
-        @Override
-        public String toString(){
-            StringBuilder bldr = new StringBuilder("[");
-
-            inOrder(this, bldr);
-            return bldr.substring(0, bldr.length()-1)+"]";
-        }
-
-        private void inOrder(TreeNode node, StringBuilder bldr){
-
-            if (node.left != null){
-                inOrder(node.left, bldr);
-            }
-            bldr.append(node.val).append(",");
-            if (node.right !=null){
-                inOrder(node.right, bldr);
-            }
-        }
-
-        public String morrisTraversal(){
-            TreeNode current = this;
-            TreeNode pre=null;
-            StringBuilder bldr = new StringBuilder("[");
-            while (current !=null){
-                if (current.left == null){
-                    bldr.append(current.val).append(",");
-                    current = current.right;
-                }
-                else{
-                    pre = current.left;
-                    // find current's immediate predecessor
-                    while (pre.right !=null && pre.right !=current){
-                        pre = pre.right;
-                    }
-
-                    if (pre.right == null){
-                        // make a temp link from right to current;
-                        pre.right = current;
-                        current = current.left;
-                    }
-                    else{
-                        // pre.right is pointed to current; meaning that we finished the traversal of all current's left.
-                        // we need to visit current now.
-                        // restore pre.right to null;
-                        pre.right = null;
-                        bldr.append(current.val).append(",");
-                        current = current.right;
-                    }
-
-                }
-            }
-
-            return bldr.deleteCharAt(bldr.lastIndexOf(",")).append("]").toString();
-        }
-
-    }
-
     public TreeNode sortedArrayToBST(int[] nums) {
         if (nums == null || nums.length==0){
             return null;
@@ -316,6 +253,35 @@ public class BinaryTreeCodec {
         }
         */
         return result;
+
+    }
+
+    public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+        if (p==null|| root==null){
+            return null;
+        }
+        if (p.right !=null){
+            TreeNode suc = p.right;
+            while (suc !=null && suc.left!=null){
+                suc = suc.left;
+            }
+            return suc;
+        }
+        else{
+            TreeNode parent=root;
+            TreeNode pre = root;
+            while (parent !=null){
+                if (parent.val < p.val){
+                    parent = parent.right;
+                }
+                else{
+                    pre = parent;
+                    parent =  parent.right;
+                }
+            }
+            return pre;
+
+        }
 
     }
 
